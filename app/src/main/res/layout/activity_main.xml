@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.percent.PercentFrameLayout
+        android:gravity="center"
+        android:layout_margin="16dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/picture"
+            android:layout_gravity="left|top"
+            app:layout_widthPercent="45%"
+            app:layout_heightPercent="40%"/>
+            //android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/iv_target"
+            android:layout_gravity="right|top"
+            app:layout_widthPercent="45%"
+            app:layout_heightPercent="40%"
+            android:layout_height="wrap_content" />
+
+
+
+
+        <!--<RelativeLayout-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:layout_gravity="right|top"-->
+            <!--app:layout_widthPercent="45%"-->
+            <!--android:layout_height="wrap_content">-->
+            <!--<ImageView-->
+                <!--android:id="@+id/iv_target"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent" />-->
+
+        <ProgressBar
+            android:id="@+id/pb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="invisible" />
+
+        <!--</RelativeLayout>-->
+
+    </android.support.percent.PercentFrameLayout>
+
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?actionBarSize"
+        app:tabGravity="fill"
+        app:tabSelectedTextColor="@android:color/white"
+        app:tabTextColor="@android:color/white"
+        app:tabIndicatorColor="@color/colorAccent"
+        app:tabIndicatorHeight="4dp"
+        app:tabBackground="@color/colorPrimary"
+        app:tabMode="scrollable"/>
+
+    <TextView
+
+        android:id="@+id/tv_pb"
+        android:layout_margin="32dp"
+        android:layout_gravity="center_horizontal"
+        tools:text="100 %"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <SeekBar
+        android:id="@+id/simpleSeekBar"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp" />
+
+
+   <!-- <Button
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/btn_sketch"
+        android:text="Sketch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/btn_gray"
+        android:text="Gray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/btn_blur"
+        android:text="Blur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/btn_invert"
+        android:text="Invert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />-->
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/take_photo"
+        android:layout_marginLeft="75dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:drawableTop="@drawable/photo"
+        android:text="拍照" />
+
+    <Button
+        android:id="@+id/choose_from_album"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="75dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:drawableTop="@drawable/album"
+        android:text="从相册中选一张" />
+    </LinearLayout>
+</LinearLayout>
