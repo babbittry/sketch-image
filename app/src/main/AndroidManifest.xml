@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:hardwareAccelerated="false"
@@ -13,7 +15,8 @@
         android:label="图像课设"
         android:roundIcon="@mipmap/round_icon"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true">
         <activity android:name="com.devs.sketchimagedemo.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,8 +35,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        tools:replace="Android:icon, android:theme"
-
 
     </application>
 
