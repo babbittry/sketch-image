@@ -373,7 +373,7 @@ public class MainActivity extends AppCompatActivity  {
         Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+                path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
             }
             cursor.close();
         }
