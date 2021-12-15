@@ -5,7 +5,6 @@ import android.graphics.Matrix;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.google.android.material.tabs.TabLayout;
-import androidx.percentlayout.widget.PercentFrameLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.app.AlertDialog;
