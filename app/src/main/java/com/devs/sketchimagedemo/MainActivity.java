@@ -1,11 +1,14 @@
 package com.devs.sketchimagedemo;
 
 import android.content.res.Resources;
+import android.graphics.Matrix;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.design.widget.TabLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayout;
+import androidx.percentlayout.widget.PercentFrameLayout;
+import androidx.appcompat.app.AppCompatDialog;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -22,26 +25,21 @@ import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
+//import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import 	androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import android.widget.Toast;
 
-import android.graphics.Matrix;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -115,7 +113,7 @@ public class MainActivity extends AppCompatActivity  {
                 if (Build.VERSION.SDK_INT < 24) {
                     imageUri = Uri.fromFile(outputImage);
                 } else {
-                    imageUri = FileProvider.getUriForFile(MainActivity.this, "com.example.cameraalbumtest.fileprovider", outputImage);
+                    imageUri = FileProvider.getUriForFile(MainActivity.this, "com.mydomain.fileprovider", outputImage);
                 }
                 // 启动相机程序
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
