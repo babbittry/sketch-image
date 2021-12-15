@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity  {
     private Bitmap bmOriginal;
     private Bitmap bitmap;
     private SketchImage sketchImage;
-    private int MAX_PROGRESS = 100;
+    private static int MAX_PROGRESS = 100;
     private int effectType = SketchImage.ORIGINAL_TO_GRAY;
 
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity  {
         getMenuInflater().inflate(R.menu.main,menu);
         return true;
     }
-
+//    创建关于窗口
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.about:
@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity  {
         Button takePhoto = (Button) findViewById(R.id.take_photo);
         Button chooseFromAlbum = (Button) findViewById(R.id.choose_from_album);
         picture = (ImageView) findViewById(R.id.picture);
+        target = (ImageView) findViewById(R.id.iv_target);
+
+        // 拍照
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +123,7 @@ public class MainActivity extends AppCompatActivity  {
                 startActivityForResult(intent, TAKE_PHOTO);
             }
         });
+        // 相册
         chooseFromAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,73 +137,68 @@ public class MainActivity extends AppCompatActivity  {
 
 
 
-        //Bitmap bmOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.usr);
-//        String str = imageUri.toString();
-//        int istr=Integer.parseInt(str);
-//        Bitmap bmOriginal = bitmap;
-//        Bitmap bmOriginal = decodeSampledBitmapFromResource(getResources(), R.drawable.img, 200, 200);
-//
-//        target = (ImageView) findViewById(R.id.iv_target);
-//        target.setImageBitmap(bmOriginal);
-//
-//        sketchImage = new SketchImage.Builder(this, bmOriginal).build();
-//
-//        final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-//        final ProgressBar pb = (ProgressBar) findViewById(R.id.pb);
-//        final TextView tvPB = (TextView) findViewById(R.id.tv_pb);
-//
-//        tvPB.setText(String.format("%d %%", MAX_PROGRESS));
-//        seek.setMax(MAX_PROGRESS);
-//        seek.setProgress(MAX_PROGRESS);
-//        target.setImageBitmap(sketchImage.getImageAs(effectType,
-//                MAX_PROGRESS));
-//
-//        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-//        tabLayout.addTab(tabLayout.newTab().setText("灰度图"));
-//        tabLayout.addTab(tabLayout.newTab().setText("素描图"));
-//        tabLayout.addTab(tabLayout.newTab().setText("彩色素描图"));
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                effectType = tabLayout.getSelectedTabPosition();
-//                tvPB.setText(String.format("%d %%", MAX_PROGRESS));
-//                seek.setMax(MAX_PROGRESS);
-//                seek.setProgress(MAX_PROGRESS);
-//                target.setImageBitmap(sketchImage.getImageAs(effectType,
-//                        MAX_PROGRESS));
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
-//
-//
-//        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-//                tvPB.setText(String.format("%d %%", seekBar.getProgress()));
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//                pb.setVisibility(View.INVISIBLE);
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//                pb.setVisibility(View.INVISIBLE);
-//                target.setImageBitmap(sketchImage.getImageAs(effectType,
-//                        seekBar.getProgress()));
-//            }
-//        });
+
+        // 打开应用后默认的图片
+        Bitmap bmOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.usr);
+        picture.setImageBitmap(bmOriginal);
+        target.setImageBitmap(bmOriginal);
+
+        sketchImage = new SketchImage.Builder(this, bmOriginal).build();
+
+        final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
+        final ProgressBar pb = (ProgressBar) findViewById(R.id.ProgressBar);
+        final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
+
+        tvPB.setText(String.format("%d %%", MAX_PROGRESS));
+        seek.setMax(MAX_PROGRESS);
+        seek.setProgress(MAX_PROGRESS);
+        target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
+
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.addTab(tabLayout.newTab().setText("灰度图"));
+        tabLayout.addTab(tabLayout.newTab().setText("素描图"));
+        tabLayout.addTab(tabLayout.newTab().setText("彩色素描图"));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                effectType = tabLayout.getSelectedTabPosition();
+                tvPB.setText(String.format("%d %%", MAX_PROGRESS));
+                seek.setMax(MAX_PROGRESS);
+                seek.setProgress(MAX_PROGRESS);
+                target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+       });
+
+
+       seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+           @Override
+           public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+               tvPB.setText(String.format("%d %%", seekBar.getProgress()));
+           }
+
+           @Override
+           public void onStartTrackingTouch(SeekBar seekBar) {
+
+               pb.setVisibility(View.INVISIBLE);
+           }
+
+           @Override
+           public void onStopTrackingTouch(SeekBar seekBar) {
+               pb.setVisibility(View.INVISIBLE);
+               target.setImageBitmap(sketchImage.getImageAs(effectType,
+                       seekBar.getProgress()));
+           }
+       });
 
     }
 
@@ -261,14 +260,14 @@ public class MainActivity extends AppCompatActivity  {
                         sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
                         final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-                        final ProgressBar pb = (ProgressBar) findViewById(R.id.pb);
-                        final TextView tvPB = (TextView) findViewById(R.id.tv_pb);
+                        final ProgressBar pb = (ProgressBar) findViewById(R.id.ProgressBar);
+                        final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
 
                         tvPB.setText(String.format("%d %%", MAX_PROGRESS));
                         seek.setMax(MAX_PROGRESS);
                         seek.setProgress(MAX_PROGRESS);
-                        target.setImageBitmap(sketchImage.getImageAs(effectType,
-                                MAX_PROGRESS));
+                        target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
+
 
                         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
                         tabLayout.addTab(tabLayout.newTab().setText("灰度图"));
@@ -281,8 +280,7 @@ public class MainActivity extends AppCompatActivity  {
                                 tvPB.setText(String.format("%d %%", MAX_PROGRESS));
                                 seek.setMax(MAX_PROGRESS);
                                 seek.setProgress(MAX_PROGRESS);
-                                target.setImageBitmap(sketchImage.getImageAs(effectType,
-                                        MAX_PROGRESS));
+                                target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
                             }
 
                             @Override
@@ -295,6 +293,8 @@ public class MainActivity extends AppCompatActivity  {
 
                             }
                         });
+
+
 
 
                         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -312,8 +312,7 @@ public class MainActivity extends AppCompatActivity  {
                             @Override
                             public void onStopTrackingTouch(SeekBar seekBar) {
                                 pb.setVisibility(View.INVISIBLE);
-                                target.setImageBitmap(sketchImage.getImageAs(effectType,
-                                        seekBar.getProgress()));
+                                target.setImageBitmap(sketchImage.getImageAs(effectType, seekBar.getProgress()));
                             }
                         });
 
@@ -392,7 +391,7 @@ public class MainActivity extends AppCompatActivity  {
         if (imagePath != null) {
             //相册的照片
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-             Bitmap bmOriginal = bitmap;
+            Bitmap bmOriginal = bitmap;
 
 
             target = (ImageView) findViewById(R.id.iv_target);
@@ -401,14 +400,13 @@ public class MainActivity extends AppCompatActivity  {
             sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
             final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-            final ProgressBar pb = (ProgressBar) findViewById(R.id.pb);
-            final TextView tvPB = (TextView) findViewById(R.id.tv_pb);
+            final ProgressBar pb = (ProgressBar) findViewById(R.id.ProgressBar);
+            final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
 
             tvPB.setText(String.format("%d %%", MAX_PROGRESS));
             seek.setMax(MAX_PROGRESS);
             seek.setProgress(MAX_PROGRESS);
-            target.setImageBitmap(sketchImage.getImageAs(effectType,
-                    MAX_PROGRESS));
+            target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
 
             final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
             tabLayout.addTab(tabLayout.newTab().setText("灰度图"));
@@ -421,8 +419,7 @@ public class MainActivity extends AppCompatActivity  {
                     tvPB.setText(String.format("%d %%", MAX_PROGRESS));
                     seek.setMax(MAX_PROGRESS);
                     seek.setProgress(MAX_PROGRESS);
-                    target.setImageBitmap(sketchImage.getImageAs(effectType,
-                            MAX_PROGRESS));
+                    target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
                 }
 
                 @Override
@@ -489,8 +486,7 @@ public class MainActivity extends AppCompatActivity  {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
-    private int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;

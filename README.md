@@ -14,3 +14,4 @@ Processing image to pencil drawing style.
 - 素描图的效果优化。
   - 无论效果多少，都是黑白的。
   - 和素描图的混合。
+- 切换不同的模式的时候，记住之前的调节程度（百分比）。
