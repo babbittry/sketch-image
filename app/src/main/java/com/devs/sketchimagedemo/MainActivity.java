@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.google.android.material.tabs.TabLayout;
 import androidx.percentlayout.widget.PercentFrameLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -144,7 +145,6 @@ public class MainActivity extends AppCompatActivity  {
         sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
         final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-        final ProgressBar pb = (ProgressBar) findViewById(R.id.ProgressBar);
         final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
 
         tvPB.setText(String.format("%d %%", MAX_PROGRESS));
@@ -187,12 +187,10 @@ public class MainActivity extends AppCompatActivity  {
            @Override
            public void onStartTrackingTouch(SeekBar seekBar) {
 
-               pb.setVisibility(View.INVISIBLE);
            }
 
            @Override
            public void onStopTrackingTouch(SeekBar seekBar) {
-               pb.setVisibility(View.INVISIBLE);
                target.setImageBitmap(sketchImage.getImageAs(effectType,
                        seekBar.getProgress()));
            }
@@ -258,7 +256,6 @@ public class MainActivity extends AppCompatActivity  {
                         sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
                         final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-                        final ProgressBar pb = (ProgressBar) findViewById(R.id.ProgressBar);
                         final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
 
                         tvPB.setText(String.format("%d %%", MAX_PROGRESS));
@@ -304,12 +301,10 @@ public class MainActivity extends AppCompatActivity  {
                             @Override
                             public void onStartTrackingTouch(SeekBar seekBar) {
 
-                                pb.setVisibility(View.INVISIBLE);
                             }
 
                             @Override
                             public void onStopTrackingTouch(SeekBar seekBar) {
-                                pb.setVisibility(View.INVISIBLE);
                                 target.setImageBitmap(sketchImage.getImageAs(effectType, seekBar.getProgress()));
                             }
                         });
@@ -398,7 +393,6 @@ public class MainActivity extends AppCompatActivity  {
             sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
             final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-            final ProgressBar pb = (ProgressBar) findViewById(R.id.ProgressBar);
             final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
 
             tvPB.setText(String.format("%d %%", MAX_PROGRESS));
@@ -441,12 +435,10 @@ public class MainActivity extends AppCompatActivity  {
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
 
-                    pb.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    pb.setVisibility(View.INVISIBLE);
                     target.setImageBitmap(sketchImage.getImageAs(effectType,
                             seekBar.getProgress()));
                 }
