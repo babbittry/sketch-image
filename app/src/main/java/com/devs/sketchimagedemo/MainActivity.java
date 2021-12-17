@@ -5,11 +5,8 @@ import android.graphics.Matrix;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.google.android.material.tabs.TabLayout;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,9 +29,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-//import android.support.annotation.NonNull;
 import androidx.annotation.NonNull;
-import 	androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import android.widget.Toast;
@@ -58,19 +54,19 @@ public class MainActivity extends AppCompatActivity  {
     private Bitmap bmOriginal;
     private Bitmap bitmap;
     private SketchImage sketchImage;
-    private static int MAX_PROGRESS = 100;
+    private static final int MAX_PROGRESS = 100;
     private int effectType = SketchImage.ORIGINAL_TO_GRAY;
 
 
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(final Menu menu){
         getMenuInflater().inflate(R.menu.main,menu);
         return true;
     }
 //    创建关于窗口
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(final MenuItem item){
         switch (item.getItemId()){
             case R.id.about:
-                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                final AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
                 dialog.setTitle("关于我们");
                 dialog.setMessage("数字图像处理三级项目\n" +
                         "小组成员：赵鑫阳 高雨蒙 栾阔 李宇航\n" +
@@ -85,51 +81,45 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
 
-        Button takePhoto = (Button) findViewById(R.id.take_photo);
-        Button chooseFromAlbum = (Button) findViewById(R.id.choose_from_album);
+        final Button takePhoto = (Button) findViewById(R.id.take_photo);
+        final Button chooseFromAlbum = (Button) findViewById(R.id.choose_from_album);
         picture = (ImageView) findViewById(R.id.picture);
         target = (ImageView) findViewById(R.id.iv_target);
 
         // 拍照
-        takePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 创建File对象，用于存储拍照后的图片
-                File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
-                try {
-                    if (outputImage.exists()) {
-                        outputImage.delete();
-                    }
-                    outputImage.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        takePhoto.setOnClickListener(v -> {
+            // 创建File对象，用于存储拍照后的图片
+            final File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
+            try {
+                if (outputImage.exists()) {
+                    outputImage.delete();
                 }
-                if (Build.VERSION.SDK_INT < 24) {
-                    imageUri = Uri.fromFile(outputImage);
-                } else {
-                    imageUri = FileProvider.getUriForFile(MainActivity.this, "com.mydomain.fileprovider", outputImage);
-                }
-                // 启动相机程序
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, TAKE_PHOTO);
+                outputImage.createNewFile();
+            } catch (final IOException e) {
+                e.printStackTrace();
             }
+            if (Build.VERSION.SDK_INT < 24) {
+                imageUri = Uri.fromFile(outputImage);
+            } else {
+                imageUri = FileProvider.getUriForFile(MainActivity.this, "com.mydomain.fileprovider", outputImage);
+            }
+            // 启动相机程序
+            final Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, TAKE_PHOTO);
         });
         // 相册
-        chooseFromAlbum.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{ Manifest.permission. WRITE_EXTERNAL_STORAGE }, 1);
-                } else {
-                    openAlbum();
-                }
+        chooseFromAlbum.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{ Manifest.permission. WRITE_EXTERNAL_STORAGE }, 1);
+            } else {
+                openAlbum();
             }
         });
 
@@ -137,27 +127,27 @@ public class MainActivity extends AppCompatActivity  {
 
 
         // 打开应用后默认的图片
-        Bitmap bmOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.usr);
+        final Bitmap bmOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.usr);
         picture.setImageBitmap(bmOriginal);
         target.setImageBitmap(bmOriginal);
 
         sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
-        final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-        final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
+        final SeekBar seek = findViewById(R.id.simpleSeekBar);
+        final TextView tvPB = findViewById(R.id.TextView_ProgressBar);
 
         tvPB.setText(String.format("%d %%", MAX_PROGRESS));
         seek.setMax(MAX_PROGRESS);
         seek.setProgress(MAX_PROGRESS);
         target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
 
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        final TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("灰度图"));
         tabLayout.addTab(tabLayout.newTab().setText("素描图"));
         tabLayout.addTab(tabLayout.newTab().setText("彩色素描图"));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+            public void onTabSelected(final TabLayout.Tab tab) {
                 effectType = tabLayout.getSelectedTabPosition();
                 tvPB.setText(String.format("%d %%", MAX_PROGRESS));
                 seek.setMax(MAX_PROGRESS);
@@ -166,12 +156,12 @@ public class MainActivity extends AppCompatActivity  {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+            public void onTabUnselected(final TabLayout.Tab tab) {
 
             }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+            public void onTabReselected(final TabLayout.Tab tab) {
 
             }
        });
@@ -179,17 +169,17 @@ public class MainActivity extends AppCompatActivity  {
 
        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
            @Override
-           public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+           public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
                tvPB.setText(String.format("%d %%", seekBar.getProgress()));
            }
 
            @Override
-           public void onStartTrackingTouch(SeekBar seekBar) {
+           public void onStartTrackingTouch(final SeekBar seekBar) {
 
            }
 
            @Override
-           public void onStopTrackingTouch(SeekBar seekBar) {
+           public void onStopTrackingTouch(final SeekBar seekBar) {
                target.setImageBitmap(sketchImage.getImageAs(effectType,
                        seekBar.getProgress()));
            }
@@ -202,13 +192,13 @@ public class MainActivity extends AppCompatActivity  {
 
 
     private void openAlbum() {
-        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        final Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
         startActivityForResult(intent, CHOOSE_PHOTO); // 打开相册
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -222,40 +212,40 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     try {
                         // 将拍摄的照片显示出来
-                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        final Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
 
 
                         // 获得图片的宽高.
-                        int width = bitmap.getWidth();
-                        int height = bitmap.getHeight();
-                        float newWidth = 300;
-                        float newHeight = 400;
+                        final int width = bitmap.getWidth();
+                        final int height = bitmap.getHeight();
+                        final float newWidth = 300;
+                        final float newHeight = 400;
                         // 计算缩放比例.
-                        float scaleWidth = ((float) newWidth) / width;
-                        float scaleHeight = ((float) newHeight) / height;
+                        final float scaleWidth = newWidth / width;
+                        final float scaleHeight = newHeight / height;
                         // 取得想要缩放的matrix参数.
-                        Matrix matrix = new Matrix();
+                        final Matrix matrix = new Matrix();
                         matrix.postScale(scaleWidth, scaleHeight);
                         // 得到新的图片.
-                        Bitmap bmOriginal = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+                        final Bitmap bmOriginal = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
                         //Bitmap bmOriginal = bitmap;
 
 
 
 
-                        target = (ImageView) findViewById(R.id.iv_target);
+                        target = findViewById(R.id.iv_target);
                         target.setImageBitmap(bmOriginal);
 
                         sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
-                        final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-                        final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
+                        final SeekBar seek = findViewById(R.id.simpleSeekBar);
+                        final TextView tvPB = findViewById(R.id.TextView_ProgressBar);
 
                         tvPB.setText(String.format("%d %%", MAX_PROGRESS));
                         seek.setMax(MAX_PROGRESS);
@@ -263,13 +253,13 @@ public class MainActivity extends AppCompatActivity  {
                         target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
 
 
-                        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+                        final TabLayout tabLayout = findViewById(R.id.tabLayout);
                         tabLayout.addTab(tabLayout.newTab().setText("灰度图"));
                         tabLayout.addTab(tabLayout.newTab().setText("素描图"));
                         tabLayout.addTab(tabLayout.newTab().setText("彩色素描图"));
                         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                             @Override
-                            public void onTabSelected(TabLayout.Tab tab) {
+                            public void onTabSelected(final TabLayout.Tab tab) {
                                 effectType = tabLayout.getSelectedTabPosition();
                                 tvPB.setText(String.format("%d %%", MAX_PROGRESS));
                                 seek.setMax(MAX_PROGRESS);
@@ -278,12 +268,12 @@ public class MainActivity extends AppCompatActivity  {
                             }
 
                             @Override
-                            public void onTabUnselected(TabLayout.Tab tab) {
+                            public void onTabUnselected(final TabLayout.Tab tab) {
 
                             }
 
                             @Override
-                            public void onTabReselected(TabLayout.Tab tab) {
+                            public void onTabReselected(final TabLayout.Tab tab) {
 
                             }
                         });
@@ -293,17 +283,17 @@ public class MainActivity extends AppCompatActivity  {
 
                         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                             @Override
-                            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                            public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
                                 tvPB.setText(String.format("%d %%", seekBar.getProgress()));
                             }
 
                             @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
+                            public void onStartTrackingTouch(final SeekBar seekBar) {
 
                             }
 
                             @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
+                            public void onStopTrackingTouch(final SeekBar seekBar) {
                                 target.setImageBitmap(sketchImage.getImageAs(effectType, seekBar.getProgress()));
                             }
                         });
@@ -312,7 +302,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
                         picture.setImageBitmap(bitmap);
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -335,19 +325,19 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     @TargetApi(19)
-    private void handleImageOnKitKat(Intent data) {
+    private void handleImageOnKitKat(final Intent data) {
         String imagePath = null;
-        Uri uri = data.getData();
+        final Uri uri = data.getData();
         Log.d("TAG", "handleImageOnKitKat: uri is " + uri);
         if (DocumentsContract.isDocumentUri(this, uri)) {
             // 如果是document类型的Uri，则通过document id处理
-            String docId = DocumentsContract.getDocumentId(uri);
+            final String docId = DocumentsContract.getDocumentId(uri);
             if("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String id = docId.split(":")[1]; // 解析出数字格式的id
-                String selection = MediaStore.Images.Media._ID + "=" + id;
+                final String id = docId.split(":")[1]; // 解析出数字格式的id
+                final String selection = MediaStore.Images.Media._ID + "=" + id;
                 imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
             } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
                 imagePath = getImagePath(contentUri, null);
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
@@ -360,16 +350,16 @@ public class MainActivity extends AppCompatActivity  {
         displayImage(imagePath); // 根据图片路径显示图片
     }
 
-    private void handleImageBeforeKitKat(Intent data) {
-        Uri uri = data.getData();
-        String imagePath = getImagePath(uri, null);
+    private void handleImageBeforeKitKat(final Intent data) {
+        final Uri uri = data.getData();
+        final String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
     }
 
-    private String getImagePath(Uri uri, String selection) {
+    private String getImagePath(final Uri uri, final String selection) {
         String path = null;
         // 通过Uri和selection来获取真实的图片路径
-        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        final Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
@@ -379,33 +369,33 @@ public class MainActivity extends AppCompatActivity  {
         return path;
     }
 
-    private void displayImage(String imagePath) {
+    private void displayImage(final String imagePath) {
         if (imagePath != null) {
             //相册的照片
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            Bitmap bmOriginal = bitmap;
+            final Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            final Bitmap bmOriginal = bitmap;
 
 
-            target = (ImageView) findViewById(R.id.iv_target);
+            target = findViewById(R.id.iv_target);
             target.setImageBitmap(bmOriginal);
 
             sketchImage = new SketchImage.Builder(this, bmOriginal).build();
 
-            final SeekBar seek = (SeekBar) findViewById(R.id.simpleSeekBar);
-            final TextView tvPB = (TextView) findViewById(R.id.TextView_ProgressBar);
+            final SeekBar seek = findViewById(R.id.simpleSeekBar);
+            final TextView tvPB = findViewById(R.id.TextView_ProgressBar);
 
             tvPB.setText(String.format("%d %%", MAX_PROGRESS));
             seek.setMax(MAX_PROGRESS);
             seek.setProgress(MAX_PROGRESS);
             target.setImageBitmap(sketchImage.getImageAs(effectType, MAX_PROGRESS));
 
-            final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+            final TabLayout tabLayout = findViewById(R.id.tabLayout);
             tabLayout.addTab(tabLayout.newTab().setText("灰度图"));
             tabLayout.addTab(tabLayout.newTab().setText("素描图"));
             tabLayout.addTab(tabLayout.newTab().setText("彩色素描图"));
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
-                public void onTabSelected(TabLayout.Tab tab) {
+                public void onTabSelected(final TabLayout.Tab tab) {
                     effectType = tabLayout.getSelectedTabPosition();
                     tvPB.setText(String.format("%d %%", MAX_PROGRESS));
                     seek.setMax(MAX_PROGRESS);
@@ -414,12 +404,12 @@ public class MainActivity extends AppCompatActivity  {
                 }
 
                 @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
+                public void onTabUnselected(final TabLayout.Tab tab) {
 
                 }
 
                 @Override
-                public void onTabReselected(TabLayout.Tab tab) {
+                public void onTabReselected(final TabLayout.Tab tab) {
 
                 }
             });
@@ -427,17 +417,17 @@ public class MainActivity extends AppCompatActivity  {
 
             seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
-                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
                     tvPB.setText(String.format("%d %%", seekBar.getProgress()));
                 }
 
                 @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
+                public void onStartTrackingTouch(final SeekBar seekBar) {
 
                 }
 
                 @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
+                public void onStopTrackingTouch(final SeekBar seekBar) {
                     target.setImageBitmap(sketchImage.getImageAs(effectType,
                             seekBar.getProgress()));
                 }
@@ -460,8 +450,8 @@ public class MainActivity extends AppCompatActivity  {
     For More Detail:
     https://developer.android.com/topic/performance/graphics/load-bitmap
     */
-    private Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                   int reqWidth, int reqHeight) {
+    private Bitmap decodeSampledBitmapFromResource(final Resources res, final int resId,
+                                                   final int reqWidth, final int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -475,7 +465,7 @@ public class MainActivity extends AppCompatActivity  {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
-    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private int calculateInSampleSize(final BitmapFactory.Options options, final int reqWidth, final int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
