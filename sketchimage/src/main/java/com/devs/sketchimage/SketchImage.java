@@ -23,12 +23,12 @@ public class SketchImage {
 
 
     // required
-    private final Context context;
-    private final Bitmap bitmap;
+    private Context context;
+    private Bitmap bitmap;
 
     private Bitmap bmGray, bmInvert, bmBlur, bmBlend;
 
-    private SketchImage(final Builder builder){
+    private SketchImage(Builder builder){
         this.context = builder.context;
         this.bitmap = builder.bitmap;
     }
@@ -39,7 +39,7 @@ public class SketchImage {
      * @return Processed Bitmap
      */
     //invert:转化 blur:模糊 blend:混合
-    public Bitmap getImageAs(final int type, final int value) {
+    public Bitmap getImageAs(int type, int value) {
 
         switch (type){
             case ORIGINAL_TO_GRAY:
@@ -69,11 +69,11 @@ public class SketchImage {
     // 构造器
     public static class Builder {
         // required
-        private final Context context;
-        private final Bitmap bitmap;
+        private Context context;
+        private Bitmap bitmap;
         // optional
 
-        public Builder(final Context context, final Bitmap bitmap){
+        public Builder(Context context, Bitmap bitmap){
             this.context = context;
             this.bitmap = bitmap;
         }
@@ -90,64 +90,63 @@ public class SketchImage {
      * @param saturation 饱和度
      * @return 转换后的图像
      */
-    private Bitmap toGrayscale(final Bitmap bmpOriginal, final float saturation) {
-        final int width;
-        final int height;
+    private Bitmap toGrayscale(Bitmap bmpOriginal, float saturation) {
+        int width, height;
         height = bmpOriginal.getHeight();
         width = bmpOriginal.getWidth();
 
-        final Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Canvas c = new Canvas(bmpGrayscale);
-        final Paint paint = new Paint();
-        final ColorMatrix cm = new ColorMatrix();
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
 
         cm.setSaturation(saturation / 100);
-        final ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
         paint.setColorFilter(f);
         c.drawBitmap(bmpOriginal, 0, 0, paint);
         return bmpGrayscale;
     }
 
-    private Bitmap toInverted(final Bitmap src, final float i) {
-        final ColorMatrix colorMatrix_Inverted =
+    private Bitmap toInverted(Bitmap src, float i) {
+        ColorMatrix colorMatrix_Inverted =
                 new ColorMatrix(new float[]{
                         -1, 0, 0, 0, 255,
                         0, -1, 0, 0, 255,
                         0, 0, -1, 0, 255,
                         0, 0, 0, i / 100, 0});
 
-        final ColorFilter colorFilter = new ColorMatrixColorFilter(
+        ColorFilter colorFilter = new ColorMatrixColorFilter(
                 colorMatrix_Inverted);
 
-        final Bitmap bitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(),
+        Bitmap bitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(),
                 Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(bitmap);
+        Canvas canvas = new Canvas(bitmap);
 
-        final Paint paint = new Paint();
+        Paint paint = new Paint();
         paint.setColorFilter(colorFilter);
         canvas.drawBitmap(src, 0, 0, paint);
 
         return bitmap;
     }
 
-    private Bitmap toBlur(final Bitmap input, final float i) {
+    private Bitmap toBlur(Bitmap input, float i) {
         try {
-            final RenderScript rsScript = RenderScript.create(context);
-            final Allocation alloc = Allocation.createFromBitmap(rsScript, input);
+            RenderScript rsScript = RenderScript.create(context);
+            Allocation alloc = Allocation.createFromBitmap(rsScript, input);
 
-            final ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rsScript, Element.U8_4(rsScript));
+            ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rsScript, Element.U8_4(rsScript));
             blur.setRadius((i * 25) / 100);
             blur.setInput(alloc);
 
-            final Bitmap result = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
-            final Allocation outAlloc = Allocation.createFromBitmap(rsScript, result);
+            Bitmap result = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
+            Allocation outAlloc = Allocation.createFromBitmap(rsScript, result);
 
             blur.forEach(outAlloc);
             outAlloc.copyTo(result);
 
             rsScript.destroy();
             return result;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             // TODO: handle exception
             return input;
         }
@@ -156,38 +155,38 @@ public class SketchImage {
     /**
      * Blends 2 bitmaps to one and adds the color dodge blend mode to it.
      */
-    public Bitmap colorDodgeBlend(final Bitmap source, final Bitmap layer, final float i) {
-        final Bitmap base = source.copy(Bitmap.Config.ARGB_8888, true);
-        final Bitmap blend = layer.copy(Bitmap.Config.ARGB_8888, false);
+    public Bitmap colorDodgeBlend(Bitmap source, Bitmap layer, float i) {
+        Bitmap base = source.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap blend = layer.copy(Bitmap.Config.ARGB_8888, false);
 
-        final IntBuffer buffBase = IntBuffer.allocate(base.getWidth() * base.getHeight());
+        IntBuffer buffBase = IntBuffer.allocate(base.getWidth() * base.getHeight());
         base.copyPixelsToBuffer(buffBase);
         buffBase.rewind();
 
-        final IntBuffer buffBlend = IntBuffer.allocate(blend.getWidth() * blend.getHeight());
+        IntBuffer buffBlend = IntBuffer.allocate(blend.getWidth() * blend.getHeight());
         blend.copyPixelsToBuffer(buffBlend);
         buffBlend.rewind();
 
-        final IntBuffer buffOut = IntBuffer.allocate(base.getWidth() * base.getHeight());
+        IntBuffer buffOut = IntBuffer.allocate(base.getWidth() * base.getHeight());
         buffOut.rewind();
 
         while (buffOut.position() < buffOut.limit()) {
-            final int filterInt = buffBlend.get();
-            final int srcInt = buffBase.get();
+            int filterInt = buffBlend.get();
+            int srcInt = buffBase.get();
 
-            final int redValueFilter = Color.red(filterInt);
-            final int greenValueFilter = Color.green(filterInt);
-            final int blueValueFilter = Color.blue(filterInt);
+            int redValueFilter = Color.red(filterInt);
+            int greenValueFilter = Color.green(filterInt);
+            int blueValueFilter = Color.blue(filterInt);
 
-            final int redValueSrc = Color.red(srcInt);
-            final int greenValueSrc = Color.green(srcInt);
-            final int blueValueSrc = Color.blue(srcInt);
+            int redValueSrc = Color.red(srcInt);
+            int greenValueSrc = Color.green(srcInt);
+            int blueValueSrc = Color.blue(srcInt);
 
-            final int redValueFinal = colordodge(redValueFilter, redValueSrc, i);
-            final int greenValueFinal = colordodge(greenValueFilter, greenValueSrc, i);
-            final int blueValueFinal = colordodge(blueValueFilter, blueValueSrc, i);
+            int redValueFinal = colordodge(redValueFilter, redValueSrc, i);
+            int greenValueFinal = colordodge(greenValueFilter, greenValueSrc, i);
+            int blueValueFinal = colordodge(blueValueFilter, blueValueSrc, i);
 
-            final int pixel = Color.argb((int) (i * 255) / 100, redValueFinal, greenValueFinal, blueValueFinal);
+            int pixel = Color.argb((int) (i * 255) / 100, redValueFinal, greenValueFinal, blueValueFinal);
             buffOut.put(pixel);
         }
 
@@ -199,9 +198,9 @@ public class SketchImage {
         return base;
     }
 
-    private int colordodge(final int in1, final int in2, final float i) {
-        final float image = (float) in2;
-        final float mask = (float) in1;
+    private int colordodge(int in1, int in2, float i) {
+        float image = (float) in2;
+        float mask = (float) in1;
         return ((int) ((image == 255) ? image : Math.min(255, (((long) mask << (int) (i * 8) / 100) / (255 - image)))));
     }
 
